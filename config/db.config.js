@@ -3,17 +3,10 @@ require('dotenv').config()
 
 const connection = mysql.createConnection({
     host: process.env.HOST,
+    port: process.env.PORT,
     user: process.env.USER,
     database: process.env.DATABASE,
     password: process.env.PASSWORD
-})
-
-connection.query( 'CREATE DATABASE IF NOT EXISTS users', (err, raw, fields) => {
-    if(err) {
-        return console.log('Ошибка:' + err.message)
-    } else {
-        console.log("Создание таблицы прошло успешно")
-    }
 })
 
 connection.connect((error) => {

@@ -10,5 +10,6 @@ router.post('/post/users', usersController.registUser)
 router.post('/login/users', usersController.loginUser)
 router.patch('/patch/users/', authMiddleware, usersController.editUserDataByToken)
 router.put('/put/users/:id', usersController.editUserById)
+router.get('/get/user/:id', usersController.getUserById)
 
 module.exports = router

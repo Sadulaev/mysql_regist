@@ -85,5 +85,18 @@ module.exports.usersController = {
                 })
             }
         })
+    },
+    getUserById: (req, res) => {
+        const user_id = +(req.params.id)
+        db.query(`SELECT user_name, user_lastname, user_email, user_gender FROM users WHERE user_id = "${user_id}"`, (err, rows, fields) => {
+            if (err) {
+                res.json({ status: 400, error: err })
+            } else if (rows.length <= 0) {
+                res.json({status: 400, error: "Пользователь не найден"})
+            } else {
+                const row = rows[0]
+                res.json({ status: 200, message: "Данные получены успешно", user: row })
+            }
+        })
     }
 }

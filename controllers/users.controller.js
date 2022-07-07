@@ -7,16 +7,13 @@ require('dotenv').config()
 
 module.exports.usersController = {
     registUser: async (req, res) => {
-        db.connect(err => err ? console.log(err) : console.log("Начало нового сеанса"))
-        const password = await bcrypt.hash(req.body.password, Number(process.env.BCRYPT_NUMBER))
-        db.query(`INSERT INTO users( user_name, user_email, user_password ) VALUES("${req.body.name}", "${req.body.mail}", "${password}")`, (err, rows, fields) => {
+        const {name, email, password} = req.body
+        const hash = await bcrypt.hash(password, Number(process.env.BCRYPT_NUMBER))
+        db.query(`INSERT INTO users( user_name, user_email, user_password ) VALUES("${name}", "${email}", "${hash}")`, (err, rows, fields) => {
             if (err) {
-                res.json({ status: 400, message: err.message })
-                connection.end((error) => error ? console.log(err) : console.log("Сеанс завершен"))
+                res.json({ status: 400, error: err })
             } else {
-                res.json({ status: 200, message: 'Регистрация успешна' })
-                connection.end((error) => error ? console.log(err) : console.log("Сеанс завершен"))
-
+                res.json({ status: 200, message: 'Регистрация прошла успешно' })
             }
         })
     },
@@ -24,7 +21,7 @@ module.exports.usersController = {
         const {email, password} = req.body
         db.query(`SELECT user_name, user_email, user_password FROM users WHERE user_email = "${email}"`, async (err, rows, fields) => {
             if (err) {
-                res.json({ status: 400, message: err.message })
+                res.json({ status: 400, error: err })
             } else if (rows.length <= 0) {
                 res.json({ status: 400, message: `Пользователь с email ${email} не зарегистрирован` })
             } else {

@@ -8,6 +8,6 @@ const router = Router()
 router.get('/test', exampleController.createUsersData)
 router.post('/post/users', usersController.registUser)
 router.post('/login/users', usersController.loginUser)
-router.patch('/put/users/', authMiddleware, usersController.editUserData)
+router.patch('/put/users/', authMiddleware, usersController.editUserDataByToken)
 
 module.exports = router

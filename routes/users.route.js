@@ -6,10 +6,11 @@ const authMiddleware = require('../middleware/auth.middleware')
 const router = Router()
 
 router.get('/test', exampleController.createUsersData)
-router.post('/post/users', usersController.registUser)
-router.post('/login/users', usersController.loginUser)
-router.patch('/patch/users/', authMiddleware, usersController.editUserDataByToken)
-router.put('/put/users/:id', usersController.editUserById)
-router.get('/get/user/:id', usersController.getUserById)
+router.post('/user/register', usersController.registUser)
+router.post('/user/login', usersController.loginUser)
+router.patch('/profile', authMiddleware, usersController.editUserDataByToken)
+router.put('/profile/:id', usersController.editUserById)
+router.get('/profile/:id', usersController.getUserById)
+router.get('/profiles', usersController.getUsersWithPagination)
 
 module.exports = router

@@ -98,5 +98,19 @@ module.exports.usersController = {
                 res.json({ status: 200, message: "Данные получены успешно", user: row })
             }
         })
+    },
+    getUsersWithPagination: (req, res) => {
+        let pageNumber;
+        req.query.page > 0 ? pageNumber = req.query.page : pageNumber = 1
+        console.log(req.query)
+        db.query(`SELECT user_name, user_lastname, user_email, DATE_FORMAT(regist_date, "%d.%m.%y %h:%m") AS regist_date FROM users ORDER BY regist_date LIMIT ${(pageNumber * 10) - 10}, 10`, (err, rows, fields) => {
+            if(err) {
+                res.json({status: 400, error: err})
+            } else if (rows.length <= 0) {
+                res.json({status: 400, error: 'Пользователи не найдены'})
+            } else {
+                res.json({status: 200, message: 'Пользователи найдены', users: rows})
+            }
+        })
     }
 }

@@ -19,7 +19,7 @@ module.exports.usersController = {
                     if (err) {
                         res.json({ status: 400, error: err })
                     } else {
-                        res.json({ status: 200, message: 'Регистрация прошла успешно' })
+                        res.json({ status: 201, message: 'Регистрация прошла успешно' })
                     }
                 })
             }
@@ -31,7 +31,7 @@ module.exports.usersController = {
             if (err) {
                 res.json({ status: 400, error: err })
             } else if (rows.length <= 0) {
-                res.json({ status: 400, message: `Пользователь с email ${email} не найден` })
+                res.json({ status: 404, error: `Пользователь с email ${email} не найден` })
             } else {
                 const row = rows[0]
                 if (password) {
@@ -41,7 +41,7 @@ module.exports.usersController = {
                             user_name: row.user_name,
                             user_email: row.user_email
                         }, process.env.JWT_SECRET_KEY, { expiresIn: '14d' })
-                        res.json({ status: 200, token: token })
+                        res.json({ status: 201, token: token })
                     } else {
                         res.json({ status: 400, error: 'Неверный пароль' })
                     }
@@ -58,6 +58,8 @@ module.exports.usersController = {
         db.query(`SELECT user_name, user_lastname, user_email, user_gender FROM users WHERE user_email = "${current_user_email}"`, (err, rows, fields) => {
             if (err) {
                 res.json({ status: 400, error: err })
+            } else if(rows <= 0) {
+                res.json({status: 401, error: "Ошибка авторизации(ошибка данных токена)"})
             } else {
                 const { user_name, user_lastname, user_gender, user_email } = rows[0]
                 db.query(`UPDATE users SET user_name = "${new_user_name || user_name}", user_lastname = "${new_user_lastname || user_lastname}", user_gender = "${new_user_gender || user_gender}", user_email = "${new_user_email || user_email}" WHERE user_email = "${current_user_email}"`, (err, rows, fields) => {
@@ -68,7 +70,7 @@ module.exports.usersController = {
                             user_name: new_user_name,
                             user_email: new_user_email
                         }, process.env.JWT_SECRET_KEY, { expiresIn: '14d' })
-                        res.json({ status: 200, message: "Замена прошла успешно", new_token: token })
+                        res.json({ status: 201, message: "Замена прошла успешно", new_token: token })
                     } else {
                         res.json({ status: 200, message: "Замена прошла успешно" })
                     }
@@ -100,7 +102,7 @@ module.exports.usersController = {
             if (err) {
                 res.json({ status: 400, error: err })
             } else if (rows.length <= 0) {
-                res.json({status: 400, error: "Пользователь не найден"})
+                res.json({status: 404, error: "Пользователь не найден"})
             } else {
                 const row = rows[0]
                 res.json({ status: 200, message: "Данные получены успешно", user: row })
@@ -114,7 +116,7 @@ module.exports.usersController = {
             if(err) {
                 res.json({status: 400, error: err})
             } else if (rows.length <= 0) {
-                res.json({status: 400, error: 'Пользователи не найдены'})
+                res.json({status: 404, error: 'Пользователи не найдены'})
             } else {
                 res.json({status: 200, message: 'Пользователи найдены', users: rows})
             }

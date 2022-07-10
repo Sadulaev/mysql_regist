@@ -2,7 +2,7 @@
 const db = require('../../config/db.config')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
-const { isEmail, isName, isPassword } = require('./userdDataValidation')
+const { isEmail, isName, isPassword } = require('./usersDataValidation')
 require('dotenv').config()
 
 module.exports.usersController = {
@@ -124,7 +124,7 @@ module.exports.usersController = {
     },
     getUserById: (req, res) => {
         const user_id = +(req.params.id)
-        db.query(`SELECT user_name, user_lastname, user_email, user_gender FROM users WHERE user_id = "${user_id}"`, (err, rows, fields) => {
+        db.query(`SELECT user_name, user_lastname, user_email, user_gender, img_path FROM users WHERE user_id = "${user_id}"`, (err, rows, fields) => {
             if (err) {
                 res.json({ status: 400, error: err })
             } else if (rows.length <= 0) {
@@ -138,7 +138,7 @@ module.exports.usersController = {
     getUsersWithPagination: (req, res) => {
         let pageNumber;
         req.query.page > 0 ? pageNumber = req.query.page : pageNumber = 1
-        db.query(`SELECT user_name, user_lastname, user_email, DATE_FORMAT(regist_date, "%d.%m.%y %h:%m") AS regist_date FROM users ORDER BY regist_date LIMIT ${(pageNumber * 10) - 10}, 10`, (err, rows, fields) => {
+        db.query(`SELECT user_name, user_lastname, user_email, DATE_FORMAT(regist_date, "%d.%m.%y %h:%m") AS regist_date, img_path FROM users ORDER BY regist_date LIMIT ${(pageNumber * 10) - 10}, 10`, (err, rows, fields) => {
             if (err) {
                 res.json({ status: 400, error: err })
             } else if (rows.length <= 0) {
